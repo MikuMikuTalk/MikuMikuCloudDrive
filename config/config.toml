@@ -1,0 +1,11 @@
+[app]
+title = "MikuMikuCloudDrive"
+version = "0.0.1"
+server = "0.0.0.0"
+port = 8080
+[mysql]
+host = "127.0.0.1"
+port = 3306
+username = "root"
+password = "123456"
+database = "mikumiku_cloud_drive"
