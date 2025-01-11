@@ -9,3 +9,6 @@ port = 3306
 username = "root"
 password = "123456"
 database = "mikumiku_cloud_drive"
+[auth]
+auth_secret = "meowrain"
+expire_time = 1 # 1天后过期

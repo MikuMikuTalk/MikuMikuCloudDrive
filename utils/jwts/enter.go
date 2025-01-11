@@ -9,7 +9,7 @@ import (
 
 type JwtPayload struct {
 	UserID   uint   `json:"userID"`
-	NickName string `json:"nickName"`
+	UserName string `json:"username"`
 	Email    string `json:"email"`
 }
 
