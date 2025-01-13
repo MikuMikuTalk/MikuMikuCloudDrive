@@ -2,9 +2,10 @@ package jwts
 
 import (
 	"errors"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	uuid "github.com/google/uuid"
-	"time"
 )
 
 type JwtPayload struct {
@@ -36,7 +37,11 @@ func GenerateJwtToken(payload JwtPayload, accessSecret string, expires int) (str
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(accessSecret))
+	signedToken, err := token.SignedString([]byte(accessSecret))
+	if err != nil {
+		return "", err
+	}
+	return "Bearer " + signedToken, nil // 添加 Bearer 前缀
 }
 func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(jwtToken, &CustomClaims{}, func(token *jwt.Token) (any, error) {
@@ -50,10 +55,11 @@ func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) 
 	}
 	return nil, errors.New("非法jwt token")
 }
-func ValidateJwtToken(jwtToken string, accessSecret string) (bool, error) {
-	_, err := ParseJwtToken(jwtToken, accessSecret)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
+
+// func ValidateJwtToken(jwtToken string, accessSecret string) (bool, error) {
+// 	_, err := ParseJwtToken(jwtToken, accessSecret)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }

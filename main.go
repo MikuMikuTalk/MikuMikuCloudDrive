@@ -11,6 +11,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -34,7 +35,7 @@ func main() {
 	svc := &services.ServiceContext{
 		DB: db,
 	}
-
+	r.Use(cors.Default())
 	// 将服务上下文注入到 Gin 的上下文中
 	r.Use(func(c *gin.Context) {
 		c.Set("svc", svc)

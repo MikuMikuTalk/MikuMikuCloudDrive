@@ -1,8 +1,9 @@
 package response
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Response struct {
@@ -11,6 +12,9 @@ type Response struct {
 	Message string `json:"message"`
 }
 
+func NewResponse() *Response {
+	return &Response{}
+}
 func (r *Response) SuccessResponse(c *gin.Context, data any, message ...string) {
 	r.Code = http.StatusOK
 	if len(message) > 0 {

@@ -7,10 +7,12 @@ type Config struct {
 	MysqlConfig MySQLConfiguration `mapstructure:"mysql"`
 }
 type App struct {
-	Title   string `mapstructure:"title"`
-	Version string `mapstructure:"version"`
-	Server  string `mapstructure:"server"`
-	Port    uint   `mapstructure:"port"`
+	Title     string `mapstructure:"title"`
+	Version   string `mapstructure:"version"`
+	Server    string `mapstructure:"server"`
+	Port      uint   `mapstructure:"port"`
+	UploadDir string `mapstructure:"upload_dir"`
+	CacheDir  string `mapstructure:"cache_dir"`
 }
 type MySQLConfiguration struct {
 	Host     string `mapstructure:"host"`

@@ -7,6 +7,6 @@ type FileModel struct {
 	UserID   uint
 	FileName string
 	FilePath string
-	FileSize uint64
+	FileSize int64
 	FileHash string
 }
