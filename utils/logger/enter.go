@@ -1,8 +1,9 @@
 package logger
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 func InitLogger(level logrus.Level) {
@@ -14,5 +15,4 @@ func InitLogger(level logrus.Level) {
 	})
 	logrus.SetOutput(os.Stdout)
 	logrus.SetLevel(level)
-
 }

@@ -43,6 +43,7 @@ func GenerateJwtToken(payload JwtPayload, accessSecret string, expires int) (str
 	}
 	return "Bearer " + signedToken, nil // 添加 Bearer 前缀
 }
+
 func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(jwtToken, &CustomClaims{}, func(token *jwt.Token) (any, error) {
 		return []byte(accessSecret), nil

@@ -1,12 +1,13 @@
 package file_controller
 
 import (
+	"net/http"
+
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/types/chunk_process_types"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func GetUploadedChunks(c *gin.Context) {
@@ -27,6 +28,7 @@ func GetUploadedChunks(c *gin.Context) {
 	}
 	resp.SuccessResponse(c, getupLoadedResponse, "success")
 }
+
 func MergeChunks(c *gin.Context) {
 	var mergeReq chunk_process_types.MergeChunksRequest
 	resp := response.NewResponse()

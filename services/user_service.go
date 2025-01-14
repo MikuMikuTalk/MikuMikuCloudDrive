@@ -1,6 +1,11 @@
 package services
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models/user_models"
 	"MikuMikuCloudDrive/types/login_types"
@@ -8,11 +13,8 @@ import (
 	"MikuMikuCloudDrive/types/resgister_types"
 	"MikuMikuCloudDrive/utils/jwts"
 	"MikuMikuCloudDrive/utils/pwd"
-	"context"
-	"errors"
-	"fmt"
+
 	"github.com/redis/go-redis/v9"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -29,6 +31,7 @@ func NewUserService(db *gorm.DB, rdb *redis.Client) *UserService {
 		RedisClient: rdb,
 	}
 }
+
 func (us *UserService) Login(username, password string) (*login_types.LoginResponse, error) {
 	var user user_models.UserModel
 	err := us.DB.Take(&user, "user_name = ?", username).Error
@@ -55,6 +58,7 @@ func (us *UserService) Login(username, password string) (*login_types.LoginRespo
 		Token: token,
 	}, nil
 }
+
 func (us *UserService) Register(username, password string) (*resgister_types.RegisterResponse, error) {
 	err := us.DB.Take(&user_models.UserModel{}, "user_name = ?", username).Error
 	if err != nil {

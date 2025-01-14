@@ -2,6 +2,7 @@ package pwd
 
 import (
 	"errors"
+
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,6 +15,7 @@ func EncryptPassword(pwd string) (string, error) {
 	}
 	return string(hashPwd), nil
 }
+
 func ComparePasswords(hashedPwd string, plainPwd string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(plainPwd))
 	if err != nil {

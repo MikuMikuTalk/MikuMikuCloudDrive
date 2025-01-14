@@ -15,6 +15,7 @@ type Response struct {
 func NewResponse() *Response {
 	return &Response{}
 }
+
 func (r *Response) SuccessResponse(c *gin.Context, data any, message ...string) {
 	r.Code = http.StatusOK
 	if len(message) > 0 {
@@ -23,6 +24,7 @@ func (r *Response) SuccessResponse(c *gin.Context, data any, message ...string) 
 	r.Data = data
 	c.JSON(r.Code, r)
 }
+
 func (r *Response) ErrorResponse(c *gin.Context, code int, message ...string) {
 	r.Code = code
 	r.Data = nil

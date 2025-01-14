@@ -1,15 +1,17 @@
 package services
 
 import (
-	"MikuMikuCloudDrive/config"
-	"MikuMikuCloudDrive/models/file_models"
-	"MikuMikuCloudDrive/types/chunk_process_types"
 	"fmt"
-	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"io"
 	"os"
 	"path/filepath"
+
+	"MikuMikuCloudDrive/config"
+	"MikuMikuCloudDrive/models/file_models"
+	"MikuMikuCloudDrive/types/chunk_process_types"
+
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type FileService struct {
@@ -23,7 +25,6 @@ func NewFileService(db *gorm.DB) *FileService {
 }
 
 func (s *FileService) Upload(req chunk_process_types.ChunkUploadRequest) (*chunk_process_types.ChunkUploadedResponse, error) {
-
 	appConfig := config.ReadAppConfig()
 
 	file := req.File
@@ -58,6 +59,7 @@ func (s *FileService) Upload(req chunk_process_types.ChunkUploadRequest) (*chunk
 
 	return &chunk_process_types.ChunkUploadedResponse{}, nil
 }
+
 func (s *FileService) GetUploadedChunks(req chunk_process_types.GetUploadedChunksRequest) (*chunk_process_types.GetUploadedChunksResponse, error) {
 	fileName := req.FileName
 	totalChunks := req.TotalChunks
@@ -75,8 +77,8 @@ func (s *FileService) GetUploadedChunks(req chunk_process_types.GetUploadedChunk
 	return &chunk_process_types.GetUploadedChunksResponse{
 		ChunksArray: uploadedChunks,
 	}, nil
-
 }
+
 func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksRequest) (*chunk_process_types.MergeChunksResponse, error) {
 	fileName := req.FileName
 	totalChunks := req.TotalChunks

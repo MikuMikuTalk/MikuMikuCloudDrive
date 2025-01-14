@@ -1,16 +1,18 @@
 package middleware
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
+
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/utils/jwts"
-	"context"
-	"errors"
-	"fmt"
+
 	"github.com/redis/go-redis/v9"
-	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"

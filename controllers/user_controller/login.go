@@ -1,12 +1,13 @@
 package user_controller
 
 import (
+	"net/http"
+
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/types/login_types"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func Login(c *gin.Context) {
@@ -29,5 +30,4 @@ func Login(c *gin.Context) {
 		return
 	}
 	resp.SuccessResponse(c, loginResponse.Token, "success")
-
 }

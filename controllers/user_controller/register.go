@@ -1,10 +1,11 @@
 package user_controller
 
 import (
+	"net/http"
+
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/types/resgister_types"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -31,5 +32,4 @@ func Register(c *gin.Context) {
 	}
 
 	resp.SuccessResponse(c, "用户创建成功", "success")
-
 }

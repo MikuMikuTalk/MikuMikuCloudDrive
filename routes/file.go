@@ -17,5 +17,4 @@ func FileRouter(r *gin.Engine) {
 		fileGroup.POST("/merge", file_controller.MergeChunks)
 
 	}
-
 }

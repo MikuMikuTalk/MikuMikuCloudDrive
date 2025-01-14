@@ -1,12 +1,13 @@
 package user_controller
 
 import (
+	"net/http"
+
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/types/logout_types"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 func Logout(c *gin.Context) {

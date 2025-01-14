@@ -1,8 +1,10 @@
 package core
 
 import (
-	"MikuMikuCloudDrive/config"
 	"fmt"
+
+	"MikuMikuCloudDrive/config"
+
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/core"
 	"MikuMikuCloudDrive/models/file_models"
@@ -8,7 +10,6 @@ import (
 	"MikuMikuCloudDrive/routes"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/utils/logger"
-	"fmt"
 
 	"github.com/fatih/color"
 	"github.com/gin-contrib/cors"
@@ -17,7 +18,6 @@ import (
 )
 
 func main() {
-
 	app := config.ReadAppConfig()
 
 	r := gin.Default()

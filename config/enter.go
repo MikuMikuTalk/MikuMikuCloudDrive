@@ -46,6 +46,7 @@ func ReadAppConfig() App {
 	}
 	return appConfiguration
 }
+
 func ReadMySQLConfig() MySQLConfiguration {
 	var mysqlConfiguration MySQLConfiguration
 	mainConfiguration := viper.New()
@@ -60,6 +61,7 @@ func ReadMySQLConfig() MySQLConfiguration {
 	}
 	return mysqlConfiguration
 }
+
 func ReadRedisConfig() RedisConfiguration {
 	var redisConfiguration RedisConfiguration
 	mainConfiguration := viper.New()
@@ -74,6 +76,7 @@ func ReadRedisConfig() RedisConfiguration {
 	}
 	return redisConfiguration
 }
+
 func ReadAuthConfig() Auth {
 	var authConfiguration Auth
 	mainConfiguration := viper.New()
