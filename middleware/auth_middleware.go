@@ -3,7 +3,12 @@ package middleware
 import (
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/config"
+	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/utils/jwts"
+	"context"
+	"errors"
+	"fmt"
+	"github.com/redis/go-redis/v9"
 	"net/http"
 	"strings"
 
@@ -25,6 +30,22 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, err := jwts.ParseJwtToken(tokenString, authConfiguration.AuthSecret)
 		if err != nil {
 			resp.ErrorResponse(c, http.StatusUnauthorized, err.Error())
+			c.Abort()
+			return
+		}
+		jti := claims.RegisteredClaims.ID
+		username := claims.UserName
+		blackList := fmt.Sprintf("blacklist_%s_%s", jti, username)
+		svc := c.MustGet("svc").(*services.ServiceContext)
+		rdb := svc.RedisClient
+		val, err := rdb.Get(context.Background(), blackList).Result()
+		if err != nil && !errors.Is(err, redis.Nil) {
+			resp.ErrorResponse(c, http.StatusInternalServerError, "Internal Server Error: Failed to check blacklist")
+			c.Abort()
+			return
+		}
+		if val == "1" {
+			resp.ErrorResponse(c, http.StatusUnauthorized, "登录信息已失效")
 			c.Abort()
 			return
 		}

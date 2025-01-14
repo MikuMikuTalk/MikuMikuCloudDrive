@@ -20,7 +20,8 @@ func Login(c *gin.Context) {
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
 	db := svc.DB
-	userService := services.NewUserService(db)
+	rdb := svc.RedisClient
+	userService := services.NewUserService(db, rdb)
 	loginResponse, err := userService.Login(req.Username, req.Password)
 	if err != nil {
 		logrus.Error(err)

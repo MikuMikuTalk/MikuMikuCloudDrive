@@ -4,23 +4,29 @@ import (
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models/user_models"
 	"MikuMikuCloudDrive/types/login_types"
+	"MikuMikuCloudDrive/types/logout_types"
 	"MikuMikuCloudDrive/types/resgister_types"
 	"MikuMikuCloudDrive/utils/jwts"
 	"MikuMikuCloudDrive/utils/pwd"
+	"context"
 	"errors"
 	"fmt"
+	"github.com/redis/go-redis/v9"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
 type UserService struct {
-	DB *gorm.DB
+	DB          *gorm.DB
+	RedisClient *redis.Client
 }
 
-func NewUserService(db *gorm.DB) *UserService {
+func NewUserService(db *gorm.DB, rdb *redis.Client) *UserService {
 	return &UserService{
-		DB: db,
+		DB:          db,
+		RedisClient: rdb,
 	}
 }
 func (us *UserService) Login(username, password string) (*login_types.LoginResponse, error) {
@@ -77,4 +83,33 @@ func (us *UserService) Register(username, password string) (*resgister_types.Reg
 	}
 	logrus.Info("用户创建成功")
 	return nil, err
+}
+
+func (s *UserService) Logout(logoutReq logout_types.LogoutRequest) (*logout_types.LogoutResponse, error) {
+	token := logoutReq.Token
+	authConfig := config.ReadAuthConfig()
+
+	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
+	if err != nil {
+		logrus.Error("jwt 解析失败")
+		return nil, errors.New("jwt 解析失败")
+	}
+	now := time.Now()
+	jti := claims.RegisteredClaims.ID
+	userName := claims.UserName
+	expiration := claims.ExpiresAt.Time.Sub(now)
+	result, err := s.RedisClient.Get(context.Background(), "blacklist_"+jti+"_"+userName).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return nil, err
+	}
+	if result == "1" {
+		return nil, errors.New("您已经注销过了")
+	}
+	err = s.RedisClient.Set(context.Background(), "blacklist_"+jti+"_"+userName, true, expiration).Err()
+	if err != nil {
+		errInfo := fmt.Errorf("用户注销信息存储失败:%v", err)
+		logrus.Error(errInfo)
+		return nil, err
+	}
+	return &logout_types.LogoutResponse{}, nil
 }

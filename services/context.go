@@ -1,7 +1,11 @@
 package services
 
-import "gorm.io/gorm"
+import (
+	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
+)
 
 type ServiceContext struct {
-	DB *gorm.DB
+	DB          *gorm.DB
+	RedisClient *redis.Client
 }

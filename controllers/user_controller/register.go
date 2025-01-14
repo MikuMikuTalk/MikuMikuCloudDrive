@@ -21,7 +21,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
-	userService := services.NewUserService(svc.DB)
+	userService := services.NewUserService(svc.DB, svc.RedisClient)
 
 	_, err = userService.Register(req.Username, req.Password)
 	if err != nil {

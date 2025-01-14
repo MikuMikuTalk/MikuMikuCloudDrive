@@ -21,6 +21,12 @@ type MySQLConfiguration struct {
 	Password string `mapstructure:"password"`
 	Database string `mapstructure:"database"`
 }
+type RedisConfiguration struct {
+	Host     string `mapstructure:"host"`
+	Port     uint   `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+	Database int    `mapstructure:"db"`
+}
 type Auth struct {
 	AuthSecret string `mapstructure:"auth_secret"`
 	ExpireTime int    `mapstructure:"expire_time"`
@@ -53,6 +59,20 @@ func ReadMySQLConfig() MySQLConfiguration {
 		panic(err)
 	}
 	return mysqlConfiguration
+}
+func ReadRedisConfig() RedisConfiguration {
+	var redisConfiguration RedisConfiguration
+	mainConfiguration := viper.New()
+	mainConfiguration.SetConfigName("config")
+	mainConfiguration.AddConfigPath("./config")
+	mainConfiguration.SetConfigType("toml")
+	if err := mainConfiguration.ReadInConfig(); err != nil {
+		panic(err)
+	}
+	if err := mainConfiguration.Sub("redis").Unmarshal(&redisConfiguration); err != nil {
+		panic(err)
+	}
+	return redisConfiguration
 }
 func ReadAuthConfig() Auth {
 	var authConfiguration Auth

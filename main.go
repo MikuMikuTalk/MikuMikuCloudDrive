@@ -22,6 +22,7 @@ func main() {
 
 	r := gin.Default()
 	db := core.InitGorm()
+	rdb := core.InitRedis()
 	err := db.AutoMigrate(
 		&user_models.UserModel{},
 		&file_models.FileModel{},
@@ -33,7 +34,8 @@ func main() {
 
 	// 初始化服务上下文
 	svc := &services.ServiceContext{
-		DB: db,
+		DB:          db,
+		RedisClient: rdb,
 	}
 	r.Use(cors.Default())
 	// 将服务上下文注入到 Gin 的上下文中
