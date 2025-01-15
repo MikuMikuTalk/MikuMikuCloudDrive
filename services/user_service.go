@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"MikuMikuCloudDrive/config"
@@ -11,6 +12,7 @@ import (
 	"MikuMikuCloudDrive/types/login_types"
 	"MikuMikuCloudDrive/types/logout_types"
 	"MikuMikuCloudDrive/types/resgister_types"
+	userinfo_types "MikuMikuCloudDrive/types/user_info_types"
 	"MikuMikuCloudDrive/utils/jwts"
 	"MikuMikuCloudDrive/utils/pwd"
 
@@ -92,7 +94,7 @@ func (us *UserService) Register(username, password string) (*resgister_types.Reg
 func (s *UserService) Logout(logoutReq logout_types.LogoutRequest) (*logout_types.LogoutResponse, error) {
 	token := logoutReq.Token
 	authConfig := config.ReadAuthConfig()
-
+	token = strings.TrimPrefix(token, "Bearer ")
 	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
 	if err != nil {
 		logrus.Error("jwt 解析失败")
@@ -116,4 +118,27 @@ func (s *UserService) Logout(logoutReq logout_types.LogoutRequest) (*logout_type
 		return nil, err
 	}
 	return &logout_types.LogoutResponse{}, nil
+}
+
+func (s *UserService) GetUserInfo(getUserInfoReq userinfo_types.UserInfoRequest) (*userinfo_types.UserInfoResponse, error) {
+	token := getUserInfoReq.Token
+	token = strings.TrimPrefix(token, "Bearer ")
+	authConfig := config.ReadAuthConfig()
+	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
+	if err != nil {
+		logrus.Error("jwt 解析失败")
+		return nil, errors.New("jwt 解析失败")
+	}
+
+	var userModel user_models.UserModel
+	err = s.DB.Take(&userModel, claims.UserID).Error
+	if err != nil {
+		logrus.Error("查找用户失败")
+		return nil, errors.New("查找用户失败")
+	}
+	return &userinfo_types.UserInfoResponse{
+		UserName: userModel.UserName,
+		Email:    userModel.Email,
+		Avatar:   userModel.Avatar,
+	}, nil
 }
