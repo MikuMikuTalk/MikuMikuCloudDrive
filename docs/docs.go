@@ -365,15 +365,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "avatar": {
-                    "description": "绑定到 JSON 字段",
                     "type": "string"
                 },
                 "email": {
-                    "description": "绑定到 JSON 字段",
                     "type": "string"
                 },
                 "password": {
-                    "description": "绑定到 JSON 字段",
                     "type": "string"
                 },
                 "token": {
@@ -381,7 +378,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "description": "绑定到 JSON 字段",
                     "type": "string"
                 }
             }

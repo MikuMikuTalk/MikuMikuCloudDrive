@@ -1,14 +1,15 @@
 package user_service
 
 import (
-	"MikuMikuCloudDrive/config"
-	"MikuMikuCloudDrive/types/logout_types"
-	"MikuMikuCloudDrive/utils/jwts"
 	"context"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
+
+	"MikuMikuCloudDrive/config"
+	"MikuMikuCloudDrive/types/logout_types"
+	"MikuMikuCloudDrive/utils/jwts"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"

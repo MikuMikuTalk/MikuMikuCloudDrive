@@ -38,19 +38,15 @@ definitions:
   userinfo_types.UpdateUserInfoRequest:
     properties:
       avatar:
-        description: 绑定到 JSON 字段
         type: string
       email:
-        description: 绑定到 JSON 字段
         type: string
       password:
-        description: 绑定到 JSON 字段
         type: string
       token:
         description: 绑定到 Authorization 头
         type: string
       username:
-        description: 绑定到 JSON 字段
         type: string
     type: object
   userinfo_types.UpdateUserInfoResponse:

@@ -1,11 +1,12 @@
 package user_service
 
 import (
+	"errors"
+
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models/user_models"
 	userinfo_types "MikuMikuCloudDrive/types/user_info_types"
 	"MikuMikuCloudDrive/utils/jwts"
-	"errors"
 
 	"github.com/sirupsen/logrus"
 )

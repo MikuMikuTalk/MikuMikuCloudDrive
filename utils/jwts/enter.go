@@ -57,6 +57,7 @@ func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) 
 	}
 	return nil, errors.New("非法jwt token")
 }
+
 func ProcessJwtToken(jwtToken string) string {
 	token := strings.TrimPrefix(jwtToken, "Bearer ")
 	return token
