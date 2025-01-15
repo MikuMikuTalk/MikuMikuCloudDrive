@@ -41,15 +41,27 @@ $(PLATFORMS):
 run:
 	$(GO) run $(SRC_DIR)
 
+# 格式化代码
+.PHONY: format
+format:
+	gofumpt -w .
+
+# 生成swagger文档
+.PHONY: doc
+doc:
+	swag init -g ./main.go -o docs
+
 # 测试
 .PHONY: test
 test:
 	$(GO) test ./...
-
+	
 # 安装依赖
 .PHONY: deps
 deps:
 	$(GO) mod tidy
+	$(GO) install mvdan.cc/gofumpt@latest
+	$(GO) install github.com/swaggo/swag/cmd/swag@latest
 
 # 使用方法
 .PHONY: help
@@ -59,6 +71,8 @@ help:
 	@echo "  make clean      - 清理输出目录"
 	@echo "  make build      - 编译所有平台的可执行文件"
 	@echo "  make run        - 编译并运行项目"
+	@echo "	 make format     - 格式化代码"
+	@echo "  make doc		 - 生成swagger文档"
 	@echo "  make test       - 运行测试"
 	@echo "  make deps       - 安装依赖"
 	@echo "  make help       - 显示此帮助信息"
