@@ -15,5 +15,6 @@ func UserRouter(r *gin.Engine) {
 		userGroup.POST("/register", user_controller.Register)
 		userGroup.Use(middleware.AuthMiddleware())
 		userGroup.GET("/info", user_controller.UserInfo)
+		userGroup.PUT("info", user_controller.UpdateUserInfo)
 	}
 }

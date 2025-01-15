@@ -6,7 +6,9 @@ import (
 
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
+	"MikuMikuCloudDrive/services/file_service"
 	"MikuMikuCloudDrive/types/chunk_process_types"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -29,7 +31,7 @@ func Upload(c *gin.Context) {
 		FileMD5:     fileMd5,
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := services.NewFileService(svc.DB)
+	fileService := file_service.NewFileService(svc.DB)
 	uploadedChunksResp, err := fileService.Upload(req)
 	if err != nil {
 		logrus.Error("上传切片失败: ", err)

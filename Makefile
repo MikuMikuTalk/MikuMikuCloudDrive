@@ -36,6 +36,11 @@ $(PLATFORMS):
 	GOOS=$(word 1, $(subst /, ,$@)) GOARCH=$(word 2, $(subst /, ,$@)) \
 	$(GO) build -o $(OUT_DIR)/$(PROJECT_NAME)-$(word 1, $(subst /, ,$@))-$(word 2, $(subst /, ,$@))$(if $(findstring windows,$@),.exe) $(SRC_DIR)
 
+# 运行项目
+.PHONY: run
+run:
+	$(GO) run $(SRC_DIR)
+
 # 测试
 .PHONY: test
 test:
@@ -53,6 +58,7 @@ help:
 	@echo "  make            - 编译所有平台的可执行文件"
 	@echo "  make clean      - 清理输出目录"
 	@echo "  make build      - 编译所有平台的可执行文件"
+	@echo "  make run        - 编译并运行项目"
 	@echo "  make test       - 运行测试"
 	@echo "  make deps       - 安装依赖"
 	@echo "  make help       - 显示此帮助信息"

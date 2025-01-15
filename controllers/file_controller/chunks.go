@@ -5,7 +5,9 @@ import (
 
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
+	"MikuMikuCloudDrive/services/file_service"
 	"MikuMikuCloudDrive/types/chunk_process_types"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -19,7 +21,7 @@ func GetUploadedChunks(c *gin.Context) {
 		return
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := services.NewFileService(svc.DB)
+	fileService := file_service.NewFileService(svc.DB)
 	getupLoadedResponse, err := fileService.GetUploadedChunks(getUploadedReq)
 	if err != nil {
 		logrus.Error("获取已上传切片数失败", err)
@@ -38,7 +40,7 @@ func MergeChunks(c *gin.Context) {
 		return
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := services.NewFileService(svc.DB)
+	fileService := file_service.NewFileService(svc.DB)
 
 	mergedResp, err := fileService.MergeChunksToFile(mergeReq)
 	if err != nil {

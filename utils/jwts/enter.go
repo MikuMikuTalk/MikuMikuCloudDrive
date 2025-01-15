@@ -2,6 +2,7 @@ package jwts
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -55,6 +56,10 @@ func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) 
 		return claims, nil
 	}
 	return nil, errors.New("非法jwt token")
+}
+func ProcessJwtToken(jwtToken string) string {
+	token := strings.TrimPrefix(jwtToken, "Bearer ")
+	return token
 }
 
 // func ValidateJwtToken(jwtToken string, accessSecret string) (bool, error) {

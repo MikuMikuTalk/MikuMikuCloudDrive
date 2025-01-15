@@ -5,12 +5,23 @@ import (
 
 	"MikuMikuCloudDrive/common/response"
 	"MikuMikuCloudDrive/services"
+	"MikuMikuCloudDrive/services/user_service"
 	"MikuMikuCloudDrive/types/resgister_types"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
+// @Summary Register API(注册接口)
+// @Description 用户注册接口
+// @Tags 用户管理
+// @Accept json
+// @Produce json
+// @Param body body resgister_types.RegisterRequest true "注册请求参数"
+// @Success 200 {object} response.Response{data=resgister_types.RegisterResponse} "状态码为200 表示成功返回"
+// @Failure 400 {object} response.Response "请求参数错误"
+// @Failure 502 {object} response.Response "服务内部错误"
+// @Router /user/register [post]
 func Register(c *gin.Context) {
 	logrus.Debug("注册服务调用")
 	resp := response.Response{}
@@ -22,7 +33,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	svc := c.MustGet("svc").(*services.ServiceContext)
-	userService := services.NewUserService(svc.DB, svc.RedisClient)
+	userService := user_service.NewUserService(svc.DB, svc.RedisClient)
 
 	_, err = userService.Register(req.Username, req.Password)
 	if err != nil {

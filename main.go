@@ -11,10 +11,14 @@ import (
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/utils/logger"
 
+	_ "MikuMikuCloudDrive/docs" // 导入生成的 docs 包
+
 	"github.com/fatih/color"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -46,6 +50,7 @@ func main() {
 
 	routes.UserRouter(r)
 	routes.FileRouter(r)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	logger.InitLogger(logrus.DebugLevel)
 	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)
 	err = r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port))

@@ -1,4 +1,4 @@
-package services
+package file_service
 
 import (
 	"fmt"
