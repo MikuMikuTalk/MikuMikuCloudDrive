@@ -1,12 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"os"
 
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/core"
-	"MikuMikuCloudDrive/models/file_models"
-	"MikuMikuCloudDrive/models/user_models"
+	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/routes"
 	"MikuMikuCloudDrive/services"
 	"MikuMikuCloudDrive/utils/logger"
@@ -21,26 +22,74 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func main() {
-	app := config.ReadAppConfig()
+func initDatabase() error {
+	db := core.InitGorm()
+	err := db.AutoMigrate(
+		&models.UserModel{},
+		&models.FileModel{},
+		&models.DirectoryModel{},
+	)
+	if err != nil {
+		logrus.Error("创建表结构失败:", err)
+		return err
+	}
+	logrus.Info("数据库表结构初始化成功")
+	return nil
+}
 
+// @title MikuMikuCloudDrive
+// @version 1.0
+// @description Gin实现的云盘后端文档
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name MIT LICENSE
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8888
+
+// @securityDefinitions.apikey JWTAuth
+// @in header
+// @name Authorization
+// @Security JWTAuth
+func main() {
+	// 解析命令行参数
+	initDB := flag.Bool("initdb", false, "Initialize database tables")
+	flag.Parse()
+
+	// 初始化日志
+	logger.InitLogger(logrus.DebugLevel)
+
+	// 如果指定了--initdb参数，只初始化数据库
+	// main.go 文件已修改完成，现在支持通过 --initdb 参数初始化数据库表结构
+	if *initDB {
+		if err := initDatabase(); err != nil {
+			logrus.Error("数据库初始化失败:", err)
+			os.Exit(1)
+		}
+		return
+	}
+
+	app := config.ReadAppConfig()
 	r := gin.Default()
 	db := core.InitGorm()
 	rdb := core.InitRedis()
-	err := db.AutoMigrate(
-		&user_models.UserModel{},
-		&file_models.FileModel{},
-	)
-	if err != nil {
-		panic("创建表结构失败")
+
+	// 自动迁移数据库
+	if err := initDatabase(); err != nil {
+		logrus.Error("数据库初始化失败:", err)
+		os.Exit(1)
 	}
-	logrus.Debug("表结构创建成功")
 
 	// 初始化服务上下文
 	svc := &services.ServiceContext{
 		DB:          db,
 		RedisClient: rdb,
 	}
+	logrus.Debug("Gin 上下文创建成功！")
 	r.Use(cors.Default())
 	// 将服务上下文注入到 Gin 的上下文中
 	r.Use(func(c *gin.Context) {
@@ -51,10 +100,10 @@ func main() {
 	routes.UserRouter(r)
 	routes.FileRouter(r)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	logger.InitLogger(logrus.DebugLevel)
+
 	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)
-	err = r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port))
-	if err != nil {
-		panic(err)
+	if err := r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port)); err != nil {
+		logrus.Error("服务器启动失败:", err)
+		os.Exit(1)
 	}
 }
