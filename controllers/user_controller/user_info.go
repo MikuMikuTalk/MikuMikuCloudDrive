@@ -17,6 +17,7 @@ import (
 // @Tags 用户管理
 // @Accept json
 // @Produce json
+// @Security JWTAuth
 // @Param body body userinfo_types.UserInfoRequest true "注册请求参数"
 // @Success 200 {object} response.Response{data=userinfo_types.UserInfoResponse} "状态码为200 表示成功返回"
 // @Failure 400 {object} response.Response "请求参数错误"
@@ -43,6 +44,7 @@ func UserInfo(c *gin.Context) {
 // @Tags 用户管理
 // @Accept json
 // @Produce json
+// @Security JWTAuth
 // @Param body body userinfo_types.UpdateUserInfoRequest true "注册请求参数"
 // @Success 200 {object} response.Response{data=userinfo_types.UpdateUserInfoResponse} "状态码为200 表示成功返回"
 // @Failure 400 {object} response.Response "请求参数错误"
@@ -52,11 +54,15 @@ func UpdateUserInfo(c *gin.Context) {
 	logrus.Info("用户信息更新接口调用")
 	resp := response.NewResponse()
 	userInfoUpdateReq := userinfo_types.UpdateUserInfoRequest{}
-	if err := c.ShouldBindHeader(&userInfoUpdateReq); err != nil {
+	err := c.ShouldBindHeader(&userInfoUpdateReq)
+	if err != nil {
+		logrus.Error("绑定header失败:", err)
 		resp.ErrorResponse(c, http.StatusBadRequest, "error")
 		return
 	}
-	if err := c.ShouldBindJSON(&userInfoUpdateReq); err != nil {
+	err = c.ShouldBindJSON(&userInfoUpdateReq)
+	if err != nil {
+		logrus.Error("绑定json失败:", err)
 		resp.ErrorResponse(c, http.StatusBadRequest, "error")
 		return
 	}
