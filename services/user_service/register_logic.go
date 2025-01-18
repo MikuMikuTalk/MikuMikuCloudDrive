@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"MikuMikuCloudDrive/models/user_models"
+	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/types/resgister_types"
 	"MikuMikuCloudDrive/utils/pwd"
 
@@ -13,7 +13,7 @@ import (
 )
 
 func (us *UserService) Register(username, password string) (*resgister_types.RegisterResponse, error) {
-	err := us.DB.Take(&user_models.UserModel{}, "user_name = ?", username).Error
+	err := us.DB.Take(&models.UserModel{}, "user_name = ?", username).Error
 	if err != nil {
 		logrus.Infof("%s 不存在，将要创建用户", username)
 	}
@@ -22,7 +22,7 @@ func (us *UserService) Register(username, password string) (*resgister_types.Reg
 		logrus.Error(err)
 		return nil, err
 	}
-	var user user_models.UserModel = user_models.UserModel{
+	var user models.UserModel = models.UserModel{
 		UserName: username,
 		Password: encryptPassword,
 		Email:    username + "@example.com",

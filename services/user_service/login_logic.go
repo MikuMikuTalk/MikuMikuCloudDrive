@@ -5,7 +5,8 @@ import (
 	"fmt"
 
 	"MikuMikuCloudDrive/config"
-	"MikuMikuCloudDrive/models/user_models"
+	"MikuMikuCloudDrive/models"
+
 	"MikuMikuCloudDrive/types/login_types"
 	"MikuMikuCloudDrive/utils/jwts"
 	"MikuMikuCloudDrive/utils/pwd"
@@ -14,7 +15,7 @@ import (
 )
 
 func (us *UserService) Login(username, password string) (*login_types.LoginResponse, error) {
-	var user user_models.UserModel
+	var user models.UserModel
 	err := us.DB.Take(&user, "user_name = ?", username).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
