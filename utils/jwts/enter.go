@@ -46,6 +46,7 @@ func GenerateJwtToken(payload JwtPayload, accessSecret string, expires int) (str
 }
 
 func ParseJwtToken(jwtToken string, accessSecret string) (*CustomClaims, error) {
+	jwtToken = ProcessJwtToken(jwtToken)
 	token, err := jwt.ParseWithClaims(jwtToken, &CustomClaims{}, func(token *jwt.Token) (any, error) {
 		return []byte(accessSecret), nil
 	})
@@ -62,11 +63,3 @@ func ProcessJwtToken(jwtToken string) string {
 	token := strings.TrimPrefix(jwtToken, "Bearer ")
 	return token
 }
-
-// func ValidateJwtToken(jwtToken string, accessSecret string) (bool, error) {
-// 	_, err := ParseJwtToken(jwtToken, accessSecret)
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	return true, nil
-// }
