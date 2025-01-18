@@ -4,7 +4,8 @@ import (
 	"errors"
 
 	"MikuMikuCloudDrive/config"
-	"MikuMikuCloudDrive/models/user_models"
+	"MikuMikuCloudDrive/models"
+
 	userinfo_types "MikuMikuCloudDrive/types/user_info_types"
 	"MikuMikuCloudDrive/utils/jwts"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func (s *UserService) GetUserInfo(getUserInfoReq userinfo_types.UserInfoRequest) (*userinfo_types.UserInfoResponse, error) {
-	token := jwts.ProcessJwtToken(getUserInfoReq.Token)
+	token := getUserInfoReq.Token
 	authConfig := config.ReadAuthConfig()
 	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
 	if err != nil {
@@ -20,7 +21,7 @@ func (s *UserService) GetUserInfo(getUserInfoReq userinfo_types.UserInfoRequest)
 		return nil, errors.New("jwt 解析失败")
 	}
 
-	var userModel user_models.UserModel
+	var userModel models.UserModel
 	err = s.DB.Take(&userModel, claims.UserID).Error
 	if err != nil {
 		logrus.Error("查找用户失败")
@@ -34,7 +35,7 @@ func (s *UserService) GetUserInfo(getUserInfoReq userinfo_types.UserInfoRequest)
 }
 
 func (s *UserService) UpdateUserInfo(updateUserInfoReq userinfo_types.UpdateUserInfoRequest) (*userinfo_types.UpdateUserInfoResponse, error) {
-	token := jwts.ProcessJwtToken(updateUserInfoReq.Token)
+	token := updateUserInfoReq.Token
 	authConfig := config.ReadAuthConfig()
 	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
 	if err != nil {
@@ -42,7 +43,7 @@ func (s *UserService) UpdateUserInfo(updateUserInfoReq userinfo_types.UpdateUser
 		return nil, errors.New("jwt 解析失败")
 	}
 	userId := claims.UserID
-	var userModel user_models.UserModel
+	var userModel models.UserModel
 	err = s.DB.Take(&userModel, userId).Error
 	if err != nil {
 		logrus.Error("用户不存在")

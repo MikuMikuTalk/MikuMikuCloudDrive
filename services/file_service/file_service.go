@@ -7,7 +7,8 @@ import (
 	"path/filepath"
 
 	"MikuMikuCloudDrive/config"
-	"MikuMikuCloudDrive/models/file_models"
+	"MikuMikuCloudDrive/models"
+
 	"MikuMikuCloudDrive/types/chunk_process_types"
 
 	"github.com/sirupsen/logrus"
@@ -133,7 +134,7 @@ func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksReque
 
 		// 获取文件大小
 		fileSize := fileInfo.Size()
-		fileModel := file_models.FileModel{
+		fileModel := models.FileModel{
 			UserID:   1,
 			FileName: fileName,
 			FileHash: fileMD5,
