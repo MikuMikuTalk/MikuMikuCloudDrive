@@ -1,4 +1,25 @@
 definitions:
+  directory_types.CreateDirectoryRequest:
+    properties:
+      name:
+        type: string
+      parent_id:
+        type: integer
+      token:
+        description: 绑定到 Authorization 头
+        type: string
+    type: object
+  directory_types.CreateDirectoryResponse:
+    type: object
+  directory_types.DeleteDirectoryRequest:
+    properties:
+      directory_id:
+        type: integer
+      token:
+        type: string
+    type: object
+  directory_types.DeleteDirectoryResponse:
+    type: object
   login_types.LoginRequest:
     properties:
       password:
@@ -65,9 +86,125 @@ definitions:
       username:
         type: string
     type: object
+host: localhost:8888
 info:
-  contact: {}
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Gin实现的云盘后端文档
+  license:
+    name: MIT LICENSE
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: MikuMikuCloudDrive
+  version: "1.0"
 paths:
+  /directory/content:
+    get:
+      consumes:
+      - application/json
+      description: 获取目录内容接口
+      parameters:
+      - description: 创建目录请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/directory_types.CreateDirectoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 状态码为200 表示成功返回
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/directory_types.CreateDirectoryResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+        "502":
+          description: 服务内部错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取目录内容 API(获取目录内容)
+      tags:
+      - 目录管理
+  /directory/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建目录接口
+      parameters:
+      - description: 创建目录请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/directory_types.CreateDirectoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 状态码为200 表示成功返回
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/directory_types.CreateDirectoryResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+        "502":
+          description: 服务内部错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 创建目录 API(创建目录)
+      tags:
+      - 目录管理
+  /directory/delete:
+    post:
+      consumes:
+      - application/json
+      description: 删除目录接口
+      parameters:
+      - description: 删除目录请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/directory_types.DeleteDirectoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 状态码为200 表示成功返回
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/directory_types.DeleteDirectoryResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+        "502":
+          description: 服务内部错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 删除目录 API(删除目录)
+      tags:
+      - 目录管理
   /user/info:
     get:
       consumes:
@@ -100,6 +237,8 @@ paths:
           description: 服务内部错误
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - JWTAuth: []
       summary: 获取用户信息 API(获取用户信息)
       tags:
       - 用户管理
@@ -134,6 +273,8 @@ paths:
           description: 服务内部错误
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - JWTAuth: []
       summary: 更新用户信息 API(更新用户信息)
       tags:
       - 用户管理
@@ -242,4 +383,9 @@ paths:
       summary: Register API(注册接口)
       tags:
       - 用户管理
+securityDefinitions:
+  JWTAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
