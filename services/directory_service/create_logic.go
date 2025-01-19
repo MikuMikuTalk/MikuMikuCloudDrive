@@ -16,8 +16,10 @@ func (s *DirectoryService) CreateDirectory(directoryCreateReq directory_types.Cr
 	dir := &models.DirectoryModel{
 		UserID:   claims.UserID,
 		Name:     directoryCreateReq.Name,
-		ParentID: &directoryCreateReq.ParentID,
+		ParentID: directoryCreateReq.ParentID,
+		Path:     *directoryCreateReq.Path,
 	}
+
 	err = s.DB.Create(dir).Error
 	return nil, err
 }

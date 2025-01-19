@@ -1,8 +1,10 @@
 package directory_service
 
 import (
+	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/types/directory_types"
+	"MikuMikuCloudDrive/utils/jwts"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -16,14 +18,14 @@ func (s *DirectoryService) GetDirectoryInfo(req directory_types.GetDirectoryInfo
 	var directory models.DirectoryModel
 	var files []models.FileModel
 	var subDirs []models.DirectoryModel
-	// authConfiguration := config.ReadAuthConfig()
-	// claims, err := jwts.ParseJwtToken(req.Token, authConfiguration.AuthSecret)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	authConfiguration := config.ReadAuthConfig()
+	claims, err := jwts.ParseJwtToken(req.Token, authConfiguration.AuthSecret)
+	if err != nil {
+		return nil, err
+	}
 	directoryID := req.DirectoryID
 
-	userID := req.UserID
+	userID := claims.UserID
 	// Get directory info
 	if err := s.DB.Where("id = ? and user_id = ?", directoryID, userID).First(&directory).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

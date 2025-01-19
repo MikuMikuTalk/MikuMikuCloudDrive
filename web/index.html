@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分片上传</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>分片上传</h1>
+        <input type="file" id="file-input" />
+        <button id="upload-btn" type="button">上传</button>
+        <div class="progress-bar">
+            <div id="progress" class="progress"></div>
+        </div>
+        <p id="status"></p>
+        <div id="md5-progress"></div>
+    </div>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/3.0.2/spark-md5.min.js"></script> -->
+    <script src="script.js"></script>
+</body>
+</html>

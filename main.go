@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 
 	"MikuMikuCloudDrive/config"
@@ -99,6 +100,10 @@ func main() {
 
 	routes.UserRouter(r)
 	routes.FileRouter(r)
+	r.StaticFS("/web", http.Dir("./web"))
+	r.GET("/web", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/web/index.html")
+	})
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)

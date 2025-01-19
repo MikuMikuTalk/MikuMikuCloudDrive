@@ -15,16 +15,14 @@ func DirectoryRoute(r *gin.Engine) {
 		directoryGroup.POST("/delete", directory_controller.DeleteDirectory)
 		// 重命名
 		directoryGroup.PUT("/rename", directory_controller.RenameDirectory)
-		// 内容
-		directoryGroup.GET("/content", directory_controller.GetDirectoryContent)
 		//移动
 		directoryGroup.PUT("/move")
 		// 复制
 		directoryGroup.POST("/copy")
 		// 分享
 		directoryGroup.POST("/share")
-		// 文件夹元信息
-		directoryGroup.GET("/info")
+		// 文件夹信息
+		directoryGroup.GET("/info", directory_controller.GetDirectoryInfo)
 		// 压缩文件夹
 		directoryGroup.POST("/compress")
 		//解压文件夹

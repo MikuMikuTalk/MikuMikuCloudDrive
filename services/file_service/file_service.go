@@ -89,6 +89,16 @@ func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksReque
 	cacheDir := appConfig.CacheDir
 	uploadedDir := appConfig.UploadDir
 
+	// 查询文件夹表
+	var directoryModel models.DirectoryModel
+	directoryID := req.DirectoryID
+	err := s.DB.Take(&directoryModel, directoryID).Error
+	if err != nil {
+		logrus.Error("查询文件夹表失败", err)
+		return nil, fmt.Errorf("查询文件夹表失败")
+	}
+	directoryPath := directoryModel.Path
+	uploadedDir = uploadedDir + directoryPath
 	// 确保上传目录存在
 	if err := os.MkdirAll(uploadedDir, os.ModePerm); err != nil {
 		return nil, fmt.Errorf("failed to create upload directory: %v", err)
@@ -126,28 +136,28 @@ func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksReque
 		if err := os.Remove(chunkPath); err != nil {
 			return nil, fmt.Errorf("failed to delete chunk file: %v", err)
 		}
-		fileInfo, err := os.Stat(finalFilePath)
-		if err != nil {
-			logrus.Errorf("failed to stat file: %v", err)
-			return nil, fmt.Errorf("无法获取文件信息:%v", err)
-		}
-
-		// 获取文件大小
-		fileSize := fileInfo.Size()
-		fileModel := models.FileModel{
-			UserID:   1,
-			FileName: fileName,
-			FileHash: fileMD5,
-			FilePath: finalFilePath,
-			FileSize: fileSize,
-		}
-		// 创建数据库记录
-		err = s.DB.Create(&fileModel).Error
-		if err != nil {
-			logrus.Errorf("failed to save file info to database: %v", err)
-			return nil, err
-		}
+	}
+	fileInfo, err := os.Stat(finalFilePath)
+	if err != nil {
+		logrus.Errorf("failed to stat file: %v", err)
+		return nil, fmt.Errorf("无法获取文件信息:%v", err)
 	}
 
+	// 获取文件大小
+	fileSize := fileInfo.Size()
+	fileModel := models.FileModel{
+		UserID:      req.UserID,
+		DirectoryID: req.DirectoryID,
+		FileName:    fileName,
+		FileHash:    fileMD5,
+		FilePath:    finalFilePath,
+		FileSize:    fileSize,
+	}
+	// 创建数据库记录
+	err = s.DB.Create(&fileModel).Error
+	if err != nil {
+		logrus.Errorf("failed to save file info to database: %v", err)
+		return nil, err
+	}
 	return &chunk_process_types.MergeChunksResponse{}, nil
 }

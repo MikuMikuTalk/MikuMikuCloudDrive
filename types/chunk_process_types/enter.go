@@ -15,6 +15,8 @@ type GetUploadedChunksResponse struct {
 }
 
 type MergeChunksRequest struct {
+	UserID      uint `json:"user_id"`
+	DirectoryID uint `json:"directory_id"`
 	commonModel
 }
 
