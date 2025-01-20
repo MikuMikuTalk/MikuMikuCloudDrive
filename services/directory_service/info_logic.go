@@ -1,9 +1,9 @@
 package directory_service
 
 import (
-	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/types/directory_types"
+	utils "MikuMikuCloudDrive/utils/files"
 	"MikuMikuCloudDrive/utils/jwts"
 	"fmt"
 
@@ -14,15 +14,11 @@ type DirectoryInfoService struct {
 	DB *gorm.DB
 }
 
-func (s *DirectoryService) GetDirectoryInfo(req directory_types.GetDirectoryInfoRequest) (*directory_types.GetDirectoryInfoResponse, error) {
+func (s *DirectoryService) GetDirectoryInfo(req directory_types.GetDirectoryInfoRequest, claims *jwts.CustomClaims) (*directory_types.GetDirectoryInfoResponse, error) {
 	var directory models.DirectoryModel
 	var files []models.FileModel
 	var subDirs []models.DirectoryModel
-	authConfiguration := config.ReadAuthConfig()
-	claims, err := jwts.ParseJwtToken(req.Token, authConfiguration.AuthSecret)
-	if err != nil {
-		return nil, err
-	}
+
 	directoryID := req.DirectoryID
 
 	userID := claims.UserID
@@ -61,21 +57,13 @@ func (s *DirectoryService) GetDirectoryInfo(req directory_types.GetDirectoryInfo
 			CreatedAt:  directory.CreatedAt,
 			UpdatedAt:  directory.UpdatedAt,
 			TotalFiles: len(files),
-			TotalSize:  calculateTotalSize(files),
+			TotalSize:  utils.CalculateTotalSize(files),
 			IsRoot:     isRoot,
 		},
 		Contents: buildDirectoryContents(files, subDirs),
 	}
 
 	return response, nil
-}
-
-func calculateTotalSize(files []models.FileModel) int64 {
-	var total int64
-	for _, file := range files {
-		total += file.FileSize
-	}
-	return total
 }
 
 func buildDirectoryContents(files []models.FileModel, dirs []models.DirectoryModel) []directory_types.DirectoryItem {

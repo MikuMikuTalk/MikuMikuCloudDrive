@@ -23,23 +23,19 @@ import (
 // @Router /directory/delete [post]
 func DeleteDirectory(c *gin.Context) {
 	resp := response.NewResponse()
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	svc := services.GetServiceContextFromContext(c)
 	dirService := directory_service.NewDirectoryService(svc.DB)
 	var deleteDirectoryReq directory_types.DeleteDirectoryRequest = directory_types.DeleteDirectoryRequest{}
-	err := c.ShouldBindHeader(&deleteDirectoryReq)
-	if err != nil {
-		logrus.Error("绑定header失败:", err)
-		resp.ErrorResponse(c, http.StatusBadRequest, "绑定header失败")
-		return
-	}
-	err = c.ShouldBindJSON(&deleteDirectoryReq)
+	err := c.ShouldBindJSON(&deleteDirectoryReq)
 	if err != nil {
 		logrus.Error("绑定json失败:", err)
 		resp.ErrorResponse(c, http.StatusBadRequest, "绑定json失败")
 		return
 	}
-
-	dirDeleteResp, err := dirService.DeleteDirectory(deleteDirectoryReq)
+	// 获取claims
+	claims := services.GetClaimsFromContext(c)
+	// 获取目录服务
+	dirDeleteResp, err := dirService.DeleteDirectory(deleteDirectoryReq, claims)
 	if err != nil {
 		logrus.Error("删除目录失败:", err)
 		resp.ErrorResponse(c, http.StatusBadGateway, "删除目录失败")

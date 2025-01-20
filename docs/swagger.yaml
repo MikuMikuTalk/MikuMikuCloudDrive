@@ -5,9 +5,6 @@ definitions:
         type: string
       parent_id:
         type: integer
-      token:
-        description: 绑定到 Authorization 头
-        type: string
     type: object
   directory_types.CreateDirectoryResponse:
     type: object
@@ -15,10 +12,71 @@ definitions:
     properties:
       directory_id:
         type: integer
-      token:
-        type: string
     type: object
   directory_types.DeleteDirectoryResponse:
+    type: object
+  directory_types.DirectoryInfo:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_root:
+        type: boolean
+      is_shared:
+        type: boolean
+      name:
+        type: string
+      path:
+        type: string
+      permissions:
+        type: string
+      total_files:
+        type: integer
+      total_size:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  directory_types.DirectoryItem:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_shared:
+        type: boolean
+      name:
+        type: string
+      permissions:
+        description: e.g. "rwxr-xr-x"
+        type: string
+      size:
+        description: Only for files
+        type: integer
+      type:
+        description: '"file" or "directory"'
+        type: string
+      updated_at:
+        type: string
+    type: object
+  directory_types.GetDirectoryInfoResponse:
+    properties:
+      contents:
+        items:
+          $ref: '#/definitions/directory_types.DirectoryItem'
+        type: array
+      directory_info:
+        $ref: '#/definitions/directory_types.DirectoryInfo'
+    type: object
+  directory_types.GetDirectoryListRequest:
+    type: object
+  directory_types.GetDirectoryListResponse:
+    properties:
+      directories:
+        items:
+          $ref: '#/definitions/directory_types.DirectoryInfo'
+        type: array
     type: object
   login_types.LoginRequest:
     properties:
@@ -33,9 +91,6 @@ definitions:
         type: string
     type: object
   logout_types.LogoutRequest:
-    properties:
-      token:
-        type: string
     type: object
   logout_types.LogoutResponse:
     type: object
@@ -64,18 +119,12 @@ definitions:
         type: string
       password:
         type: string
-      token:
-        description: 绑定到 Authorization 头
-        type: string
       username:
         type: string
     type: object
   userinfo_types.UpdateUserInfoResponse:
     type: object
   userinfo_types.UserInfoRequest:
-    properties:
-      token:
-        type: string
     type: object
   userinfo_types.UserInfoResponse:
     properties:
@@ -83,6 +132,8 @@ definitions:
         type: string
       email:
         type: string
+      user_id:
+        type: integer
       username:
         type: string
     type: object
@@ -100,41 +151,6 @@ info:
   title: MikuMikuCloudDrive
   version: "1.0"
 paths:
-  /directory/content:
-    get:
-      consumes:
-      - application/json
-      description: 获取目录内容接口
-      parameters:
-      - description: 创建目录请求参数
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/directory_types.CreateDirectoryRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 状态码为200 表示成功返回
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/directory_types.CreateDirectoryResponse'
-              type: object
-        "400":
-          description: 请求参数错误
-          schema:
-            $ref: '#/definitions/response.Response'
-        "502":
-          description: 服务内部错误
-          schema:
-            $ref: '#/definitions/response.Response'
-      summary: 获取目录内容 API(获取目录内容)
-      tags:
-      - 目录管理
   /directory/create:
     post:
       consumes:
@@ -203,6 +219,79 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: 删除目录 API(删除目录)
+      tags:
+      - 目录管理
+  /directory/info:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定目录的信息和内容列表
+      parameters:
+      - description: 目录ID
+        in: query
+        name: directory_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功返回目录信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/directory_types.GetDirectoryInfoResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: 目录不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取目录信息
+      tags:
+      - 目录管理
+  /directory/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定用户的目录列表
+      parameters:
+      - description: 目录列表请求参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/directory_types.GetDirectoryListRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功返回目录信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/directory_types.GetDirectoryListResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取目录列表
       tags:
       - 目录管理
   /user/info:

@@ -31,7 +31,7 @@ func Login(c *gin.Context) {
 		resp.ErrorResponse(c, http.StatusBadGateway, "login服务 绑定json失败")
 		return
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	svc := services.GetServiceContextFromContext(c)
 	db := svc.DB
 	rdb := svc.RedisClient
 	userService := user_service.NewUserService(db, rdb)

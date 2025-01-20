@@ -38,7 +38,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		jti := claims.RegisteredClaims.ID
 		username := claims.UserName
 		blackList := fmt.Sprintf("blacklist_%s_%s", jti, username)
-		svc := c.MustGet("svc").(*services.ServiceContext)
+		svc := services.GetServiceContextFromContext(c)
 		rdb := svc.RedisClient
 		val, err := rdb.Get(context.Background(), blackList).Result()
 		if err != nil && !errors.Is(err, redis.Nil) {

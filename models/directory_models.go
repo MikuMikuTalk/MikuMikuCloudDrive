@@ -6,10 +6,10 @@ import (
 
 type DirectoryModel struct {
 	gorm.Model
-	UserID   uint   `gorm:"index;not null"`                     // 所属用户ID
-	Name     string `gorm:"size:255;uniqueIndex:idx_user_name"` // 目录名称 (unique per user)
-	ParentID *uint  `gorm:"index;default:null"`                 // 父目录ID，可以为空（表示根目录）
-	Path     string `gorm:"size:1024;not null"`                 // 目录路径
+	UserID   uint   `gorm:"index;not null"`     // 所属用户ID
+	Name     string `gorm:"size:255"`           // 目录名称
+	ParentID *uint  `gorm:"index;default:null"` // 父目录ID，可以为空（表示根目录）
+	Path     string `gorm:"size:1024;not null"` // 目录路径
 	// 关系
 	User     UserModel        `gorm:"ForeignKey:UserID"`      // 属于哪个用户
 	Parent   *DirectoryModel  `gorm:"ForeignKey:ParentID"`    // 父目录

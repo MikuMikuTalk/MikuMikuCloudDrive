@@ -4,10 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
-	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/types/logout_types"
 	"MikuMikuCloudDrive/utils/jwts"
 
@@ -15,15 +13,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (s *UserService) Logout(logoutReq logout_types.LogoutRequest) (*logout_types.LogoutResponse, error) {
-	token := logoutReq.Token
-	authConfig := config.ReadAuthConfig()
-	token = strings.TrimPrefix(token, "Bearer ")
-	claims, err := jwts.ParseJwtToken(token, authConfig.AuthSecret)
-	if err != nil {
-		logrus.Error("jwt 解析失败")
-		return nil, errors.New("jwt 解析失败")
-	}
+func (s *UserService) Logout(logoutReq logout_types.LogoutRequest, claims *jwts.CustomClaims) (*logout_types.LogoutResponse, error) {
+
 	now := time.Now()
 	jti := claims.RegisteredClaims.ID
 	userName := claims.UserName

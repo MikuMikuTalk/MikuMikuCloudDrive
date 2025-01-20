@@ -30,8 +30,8 @@ func Upload(c *gin.Context) {
 		TotalChunks: totalChunks,
 		FileMD5:     fileMd5,
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := file_service.NewFileService(svc.DB)
+	svc := services.GetServiceContextFromContext(c)
+	fileService := file_service.NewFileService(svc.DB, svc.RedisClient)
 	uploadedChunksResp, err := fileService.Upload(req)
 	if err != nil {
 		logrus.Error("上传切片失败: ", err)

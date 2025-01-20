@@ -51,6 +51,11 @@ format:
 doc:
 	swag init -g ./main.go -o docs
 
+# 初始化数据库
+.PHONY: initdb
+initdb:
+	go run main.go --initdb
+
 # 测试
 .PHONY: test
 test:
@@ -75,4 +80,5 @@ help:
 	@echo "  make doc		 - 生成swagger文档"
 	@echo "  make test       - 运行测试"
 	@echo "  make deps       - 安装依赖"
+	@echo "  make initdb     - 初始化数据库"
 	@echo "  make help       - 显示此帮助信息"

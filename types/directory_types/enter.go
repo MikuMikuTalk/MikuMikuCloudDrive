@@ -1,34 +1,22 @@
 package directory_types
 
 import (
-	"fmt"
 	"time"
 )
 
 type CreateDirectoryRequest struct {
-	Token    string  `header:"Authorization"` // 绑定到 Authorization 头
-	Name     string  `json:"name"`
-	ParentID *uint   `json:"parent_id"`
-	Path     *string `json:"path"`
+	Name     string `json:"name"`
+	ParentID *uint  `json:"parent_id"`
 }
 
 type CreateDirectoryResponse struct {
 }
 
-func (r CreateDirectoryResponse) String() string {
-	return fmt.Sprintf("CreateDirectoryResponse{}")
-}
-
 type DeleteDirectoryRequest struct {
-	Token       string `header:"Authorization"`
-	DirectoryID uint   `json:"directory_id"`
+	DirectoryID uint `json:"directory_id"`
 }
 
 type DeleteDirectoryResponse struct {
-}
-
-func (r DeleteDirectoryResponse) String() string {
-	return fmt.Sprintf("DeleteDirectoryResponse{}")
 }
 
 // DirectoryItem represents a single item in directory (file or subdirectory)
@@ -41,11 +29,6 @@ type DirectoryItem struct {
 	UpdatedAt   time.Time `json:"updated_at" testlog:"更新时间"`
 	IsShared    bool      `json:"is_shared" testlog:"是否共享"`
 	Permissions string    `json:"permissions" testlog:"权限"` // e.g. "rwxr-xr-x"
-}
-
-func (i DirectoryItem) String() string {
-	return fmt.Sprintf("DirectoryItem{ID: %d, Name: %s, Type: %s, Size: %d, CreatedAt: %s, UpdatedAt: %s, IsShared: %t, Permissions: %s}",
-		i.ID, i.Name, i.Type, i.Size, i.CreatedAt.Format(time.RFC3339), i.UpdatedAt.Format(time.RFC3339), i.IsShared, i.Permissions)
 }
 
 // DirectoryInfo contains metadata about the directory
@@ -62,14 +45,8 @@ type DirectoryInfo struct {
 	Permissions string    `json:"permissions" testlog:"权限"`
 }
 
-func (i DirectoryInfo) String() string {
-	return fmt.Sprintf("DirectoryInfo{ID: %d, Name: %s, Path: %s, CreatedAt: %s, UpdatedAt: %s, TotalFiles: %d, TotalSize: %d, IsRoot: %t, IsShared: %t, Permissions: %s}",
-		i.ID, i.Name, i.Path, i.CreatedAt.Format(time.RFC3339), i.UpdatedAt.Format(time.RFC3339), i.TotalFiles, i.TotalSize, i.IsRoot, i.IsShared, i.Permissions)
-}
-
 type GetDirectoryInfoRequest struct {
-	Token       string `header:"Authorization"`
-	DirectoryID uint   `json:"directory_id"`
+	DirectoryID string `json:"directory_id"`
 }
 
 // GetDirectoryInfoResponse represents the full response for directory info
@@ -78,16 +55,9 @@ type GetDirectoryInfoResponse struct {
 	Contents      []DirectoryItem `json:"contents"`
 }
 
-func (r GetDirectoryInfoResponse) String() string {
-	contentsStr := "["
-	for i, item := range r.Contents {
-		if i > 0 {
-			contentsStr += ", "
-		}
-		contentsStr += item.String()
-	}
-	contentsStr += "]"
+type GetDirectoryListRequest struct {
+}
 
-	return fmt.Sprintf("GetDirectoryInfoResponse{DirectoryInfo: %s, Contents: %s}",
-		r.DirectoryInfo.String(), contentsStr)
+type GetDirectoryListResponse struct {
+	Directories []DirectoryInfo `json:"directories"`
 }

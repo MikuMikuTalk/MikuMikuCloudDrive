@@ -20,8 +20,9 @@ func GetUploadedChunks(c *gin.Context) {
 		resp.ErrorResponse(c, http.StatusBadRequest, "绑定json失败")
 		return
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := file_service.NewFileService(svc.DB)
+	svc := services.GetServiceContextFromContext(c)
+
+	fileService := file_service.NewFileService(svc.DB, svc.RedisClient)
 	getupLoadedResponse, err := fileService.GetUploadedChunks(getUploadedReq)
 	if err != nil {
 		logrus.Error("获取已上传切片数失败", err)
@@ -39,10 +40,10 @@ func MergeChunks(c *gin.Context) {
 		resp.ErrorResponse(c, http.StatusBadRequest, "绑定json失败")
 		return
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
-	fileService := file_service.NewFileService(svc.DB)
-
-	mergedResp, err := fileService.MergeChunksToFile(mergeReq)
+	svc := services.GetServiceContextFromContext(c)
+	fileService := file_service.NewFileService(svc.DB, svc.RedisClient)
+	claims := services.GetClaimsFromContext(c)
+	mergedResp, err := fileService.MergeChunksToFile(mergeReq, claims)
 	if err != nil {
 		logrus.Error("合并分片失败", err)
 		resp.ErrorResponse(c, http.StatusInternalServerError, err.Error())

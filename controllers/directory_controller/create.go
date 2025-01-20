@@ -23,28 +23,23 @@ import (
 // @Router /directory/create [post]
 func CreateDirectory(c *gin.Context) {
 	resp := response.NewResponse()
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	svc := services.GetServiceContextFromContext(c)
 	dirService := directory_service.NewDirectoryService(svc.DB)
 
 	var req directory_types.CreateDirectoryRequest
-	err := c.ShouldBindHeader(&req)
-	if err != nil {
-		logrus.Error("绑定header失败:", err)
-		resp.ErrorResponse(c, http.StatusBadRequest, "绑定header失败")
-		return
-	}
-	err = c.ShouldBindJSON(&req)
+	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		logrus.Error("绑定json失败:", err)
 		resp.ErrorResponse(c, http.StatusBadRequest, "绑定json失败")
 		return
 	}
 	createDirReq := directory_types.CreateDirectoryRequest{
-		Token:    req.Token,
 		Name:     req.Name,
 		ParentID: req.ParentID,
 	}
-	createResp, err := dirService.CreateDirectory(createDirReq)
+	// 获取claims
+	claims := services.GetClaimsFromContext(c)
+	createResp, err := dirService.CreateDirectory(createDirReq, claims)
 	if err != nil {
 		logrus.Error("创建目录失败:", err)
 		resp.ErrorResponse(c, http.StatusBadGateway, "创建目录失败")

@@ -17,64 +17,6 @@
     },
     "host": "localhost:8888",
     "paths": {
-        "/directory/content": {
-            "get": {
-                "description": "获取目录内容接口",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "目录管理"
-                ],
-                "summary": "获取目录内容 API(获取目录内容)",
-                "parameters": [
-                    {
-                        "description": "创建目录请求参数",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/directory_types.CreateDirectoryRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "状态码为200 表示成功返回",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/directory_types.CreateDirectoryResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "请求参数错误",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "502": {
-                        "description": "服务内部错误",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/directory/create": {
             "post": {
                 "description": "创建目录接口",
@@ -184,6 +126,126 @@
                     },
                     "502": {
                         "description": "服务内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/directory/info": {
+            "get": {
+                "description": "获取指定目录的信息和内容列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "目录管理"
+                ],
+                "summary": "获取目录信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "目录ID",
+                        "name": "directory_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功返回目录信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/directory_types.GetDirectoryInfoResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "目录不存在",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/directory/list": {
+            "get": {
+                "description": "获取指定用户的目录列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "目录管理"
+                ],
+                "summary": "获取目录列表",
+                "parameters": [
+                    {
+                        "description": "目录列表请求参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/directory_types.GetDirectoryListRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功返回目录信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/directory_types.GetDirectoryListResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -499,10 +561,6 @@
                 },
                 "parent_id": {
                     "type": "integer"
-                },
-                "token": {
-                    "description": "绑定到 Authorization 头",
-                    "type": "string"
                 }
             }
         },
@@ -514,14 +572,106 @@
             "properties": {
                 "directory_id": {
                     "type": "integer"
-                },
-                "token": {
-                    "type": "string"
                 }
             }
         },
         "directory_types.DeleteDirectoryResponse": {
             "type": "object"
+        },
+        "directory_types.DirectoryInfo": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_root": {
+                    "type": "boolean"
+                },
+                "is_shared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "string"
+                },
+                "total_files": {
+                    "type": "integer"
+                },
+                "total_size": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "directory_types.DirectoryItem": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_shared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "description": "e.g. \"rwxr-xr-x\"",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "Only for files",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "\"file\" or \"directory\"",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "directory_types.GetDirectoryInfoResponse": {
+            "type": "object",
+            "properties": {
+                "contents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/directory_types.DirectoryItem"
+                    }
+                },
+                "directory_info": {
+                    "$ref": "#/definitions/directory_types.DirectoryInfo"
+                }
+            }
+        },
+        "directory_types.GetDirectoryListRequest": {
+            "type": "object"
+        },
+        "directory_types.GetDirectoryListResponse": {
+            "type": "object",
+            "properties": {
+                "directories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/directory_types.DirectoryInfo"
+                    }
+                }
+            }
         },
         "login_types.LoginRequest": {
             "type": "object",
@@ -543,12 +693,7 @@
             }
         },
         "logout_types.LogoutRequest": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "logout_types.LogoutResponse": {
             "type": "object"
@@ -591,10 +736,6 @@
                 "password": {
                     "type": "string"
                 },
-                "token": {
-                    "description": "绑定到 Authorization 头",
-                    "type": "string"
-                },
                 "username": {
                     "type": "string"
                 }
@@ -604,12 +745,7 @@
             "type": "object"
         },
         "userinfo_types.UserInfoRequest": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         },
         "userinfo_types.UserInfoResponse": {
             "type": "object",
@@ -619,6 +755,9 @@
                 },
                 "email": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 },
                 "username": {
                     "type": "string"

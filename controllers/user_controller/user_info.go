@@ -26,12 +26,11 @@ import (
 func UserInfo(c *gin.Context) {
 	logrus.Info("用户信息接口调用")
 	resp := response.NewResponse()
-	userInfoReq := userinfo_types.UserInfoRequest{
-		Token: c.Request.Header.Get("Authorization"),
-	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	userInfoReq := userinfo_types.UserInfoRequest{}
+	svc := services.GetServiceContextFromContext(c)
 	userService := user_service.NewUserService(svc.DB, svc.RedisClient)
-	userinfoResp, err := userService.GetUserInfo(userInfoReq)
+	claims := services.GetClaimsFromContext(c)
+	userinfoResp, err := userService.GetUserInfo(userInfoReq, claims)
 	if err != nil {
 		resp.ErrorResponse(c, http.StatusBadGateway, "获取用户信息失败")
 		return
@@ -54,21 +53,16 @@ func UpdateUserInfo(c *gin.Context) {
 	logrus.Info("用户信息更新接口调用")
 	resp := response.NewResponse()
 	userInfoUpdateReq := userinfo_types.UpdateUserInfoRequest{}
-	err := c.ShouldBindHeader(&userInfoUpdateReq)
-	if err != nil {
-		logrus.Error("绑定header失败:", err)
-		resp.ErrorResponse(c, http.StatusBadRequest, "error")
-		return
-	}
-	err = c.ShouldBindJSON(&userInfoUpdateReq)
+	err := c.ShouldBindJSON(&userInfoUpdateReq)
 	if err != nil {
 		logrus.Error("绑定json失败:", err)
 		resp.ErrorResponse(c, http.StatusBadRequest, "error")
 		return
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	svc := services.GetServiceContextFromContext(c)
 	userService := user_service.NewUserService(svc.DB, svc.RedisClient)
-	userInfoUpdateResp, err := userService.UpdateUserInfo(userInfoUpdateReq)
+	claims := services.GetClaimsFromContext(c)
+	userInfoUpdateResp, err := userService.UpdateUserInfo(userInfoUpdateReq, claims)
 	if err != nil {
 		resp.ErrorResponse(c, http.StatusBadGateway, err.Error())
 		return

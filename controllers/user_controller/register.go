@@ -32,7 +32,7 @@ func Register(c *gin.Context) {
 		resp.ErrorResponse(c, http.StatusBadGateway, "register 绑定json失败")
 		return
 	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	svc := services.GetServiceContextFromContext(c)
 	userService := user_service.NewUserService(svc.DB, svc.RedisClient)
 
 	_, err = userService.Register(req.Username, req.Password)
@@ -41,6 +41,6 @@ func Register(c *gin.Context) {
 		resp.ErrorResponse(c, http.StatusBadGateway, err.Error())
 		return
 	}
-
+	// directoryService := directory_service.NewDirectoryService(svc.DB)
 	resp.SuccessResponse(c, "用户创建成功", "success")
 }

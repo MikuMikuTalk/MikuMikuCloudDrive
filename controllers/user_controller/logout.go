@@ -24,14 +24,11 @@ import (
 // @Router /user/logout [post]
 func Logout(c *gin.Context) {
 	resp := response.NewResponse()
-
-	token := c.Request.Header.Get("Authorization")
-	var logoutReq logout_types.LogoutRequest = logout_types.LogoutRequest{
-		Token: token,
-	}
-	svc := c.MustGet("svc").(*services.ServiceContext)
+	var logoutReq logout_types.LogoutRequest = logout_types.LogoutRequest{}
+	svc := services.GetServiceContextFromContext(c)
 	userService := user_service.NewUserService(svc.DB, svc.RedisClient)
-	logoutResp, err := userService.Logout(logoutReq)
+	claims := services.GetClaimsFromContext(c)
+	logoutResp, err := userService.Logout(logoutReq, claims)
 	if err != nil {
 		logrus.Error("Logout err:", err)
 		resp.ErrorResponse(c, http.StatusInternalServerError, err.Error())
