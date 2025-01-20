@@ -3,7 +3,7 @@ const uploadBtn = document.getElementById('upload-btn');
 const progressBar = document.getElementById('progress-bar');
 const progress = document.getElementById('progress');
 const statusText = document.getElementById('status');
-const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjMsInVzZXJuYW1lIjoidmVkYWw5ODciLCJlbWFpbCI6InZlZGFsOTg3QGV4YW1wbGUuY29tIiwiZXhwIjoxNzM3NDIyMjMwLCJqdGkiOiIwY2Q3YWNiYy04YTIxLTQwMjgtYmViYi1hNjRkN2Q4NTI5MjIifQ.ohGaCOcxytnvM549YMJ_ZFTbMUeFYhl1wWa7h0Ll4zY"
+const token = localStorage.getItem('token');
 let file;
 fileInput.addEventListener('change', (event) => {
     file = event.target.files[0];
