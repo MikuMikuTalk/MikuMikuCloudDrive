@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面未找到</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 3rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-image {
+            width: 220px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        h1 {
+            color: #495057;
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .path {
+            color: #dc3545;
+            font-weight: 500;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+
+        a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            background: rgba(13, 110, 253, 0.1);
+        }
+
+        a:hover {
+            background: rgba(13, 110, 253, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="/web/images/404.png" alt="404 Error" class="error-image">
+        <h1>页面未找到</h1>
+        <p>抱歉，您访问的页面不存在。</p>
+        <p>您访问的路径：<span class="path">{{.Path}}</span> 不存在</p>
+        <a href="/web">返回首页</a>
+    </div>
+</body>
+
+</html>

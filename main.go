@@ -8,6 +8,7 @@ import (
 
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/core"
+	"MikuMikuCloudDrive/middleware"
 	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/routes"
 	"MikuMikuCloudDrive/services"
@@ -98,13 +99,25 @@ func main() {
 		c.Next()
 	})
 
+	// 注册路由
 	routes.UserRouter(r)
 	routes.FileRouter(r)
+	routes.DirectoryRoute(r)
+
+	// 注册静态文件
 	r.StaticFS("/web", http.Dir("./web"))
 	r.GET("/web", func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/web/index.html")
 	})
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	// 获取配置文件中的上传目录
+	uploadDir := app.UploadDir
+	r.Use(middleware.CheckDirectoryAccess)
+	r.StaticFS("/uploads", http.Dir("./"+uploadDir))
+
+	// 加载模板文件
+	r.LoadHTMLGlob("templates/*")
 
 	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)
 	if err := r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port)); err != nil {

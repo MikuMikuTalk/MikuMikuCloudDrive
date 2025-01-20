@@ -13,6 +13,7 @@ type App struct {
 	Port      uint   `mapstructure:"port"`
 	UploadDir string `mapstructure:"upload_dir"`
 	CacheDir  string `mapstructure:"cache_dir"`
+	WebUrl    string `mapstructure:"web_url"`
 }
 type MySQLConfiguration struct {
 	Host     string `mapstructure:"host"`

@@ -5,6 +5,7 @@ server = "0.0.0.0"
 port = 8888
 upload_dir = "uploads"
 cache_dir = "cache"
+web_url = "http://127.0.0.1:8888"
 [mysql]
 host = "127.0.0.1"
 port = 3306
@@ -12,10 +13,10 @@ username = "root"
 password = "123456"
 database = "mikumiku_cloud_drive"
 [redis]
-host = "127.0.0.1"       # Redis 服务器地址
-port = 6379              # Redis 服务器端口
-password = "" # Redis 密码（如果没有密码，可以留空或删除此行）
-db = 1                   # 使用的 Redis 数据库编号（默认是 0）
+host = "127.0.0.1" # Redis 服务器地址
+port = 6379        # Redis 服务器端口
+password = ""      # Redis 密码（如果没有密码，可以留空或删除此行）
+db = 1             # 使用的 Redis 数据库编号（默认是 0）
 [auth]
 auth_secret = "meowrain"
-expire_time = 12 # 12小时后过期
+expire_time = 12         # 12小时后过期

@@ -8,20 +8,24 @@ import (
 
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/models"
+	"MikuMikuCloudDrive/utils/jwts"
 
 	"MikuMikuCloudDrive/types/chunk_process_types"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
 type FileService struct {
-	DB *gorm.DB
+	DB          *gorm.DB
+	RedisClient *redis.Client
 }
 
-func NewFileService(db *gorm.DB) *FileService {
+func NewFileService(db *gorm.DB, redisClient *redis.Client) *FileService {
 	return &FileService{
-		DB: db,
+		DB:          db,
+		RedisClient: redisClient,
 	}
 }
 
@@ -80,7 +84,7 @@ func (s *FileService) GetUploadedChunks(req chunk_process_types.GetUploadedChunk
 	}, nil
 }
 
-func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksRequest) (*chunk_process_types.MergeChunksResponse, error) {
+func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksRequest, claims *jwts.CustomClaims) (*chunk_process_types.MergeChunksResponse, error) {
 	fileName := req.FileName
 	totalChunks := req.TotalChunks
 	fileMD5 := req.FileMD5
@@ -146,7 +150,7 @@ func (s *FileService) MergeChunksToFile(req chunk_process_types.MergeChunksReque
 	// 获取文件大小
 	fileSize := fileInfo.Size()
 	fileModel := models.FileModel{
-		UserID:      req.UserID,
+		UserID:      claims.UserID,
 		DirectoryID: req.DirectoryID,
 		FileName:    fileName,
 		FileHash:    fileMD5,
