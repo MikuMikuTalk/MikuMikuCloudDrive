@@ -1,55 +1,104 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem;
 }
 
 .container {
-    width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 h1 {
+    color: #495057;
     text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
-input, button {
+#file-input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-
-button {
-    background-color: #5cb85c;
-    color: #fff;
-    border: none;
+    padding: 1rem;
+    border: 2px dashed #ced4da;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #4cae4c;
+#file-input:hover {
+    border-color: #0d6efd;
+    background: rgba(13, 110, 253, 0.05);
+}
+
+#upload-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+#upload-btn:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
 }
 
 .progress-bar {
     width: 100%;
-    background-color: #f7f7f7;
-    height: 20px;
-    border-radius: 5px;
+    height: 12px;
+    background: #e9ecef;
+    border-radius: 10px;
     overflow: hidden;
+    margin-bottom: 1.5rem;
 }
 
-.progress {
-    width: 0%;
+#progress {
     height: 100%;
-    background-color: #5cb85c;
+    background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+    width: 0;
+    transition: width 0.3s ease;
 }
 
 #status {
     text-align: center;
-    font-size: 14px;
-    color: #666;
+    color: #6c757d;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+#md5-progress {
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-top: 1rem;
 }

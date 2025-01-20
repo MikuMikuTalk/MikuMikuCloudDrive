@@ -3,7 +3,7 @@ const uploadBtn = document.getElementById('upload-btn');
 const progressBar = document.getElementById('progress-bar');
 const progress = document.getElementById('progress');
 const statusText = document.getElementById('status');
-
+const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjMsInVzZXJuYW1lIjoidmVkYWw5ODciLCJlbWFpbCI6InZlZGFsOTg3QGV4YW1wbGUuY29tIiwiZXhwIjoxNzM3NDIyMjMwLCJqdGkiOiIwY2Q3YWNiYy04YTIxLTQwMjgtYmViYi1hNjRkN2Q4NTI5MjIifQ.ohGaCOcxytnvM549YMJ_ZFTbMUeFYhl1wWa7h0Ll4zY"
 let file;
 fileInput.addEventListener('change', (event) => {
     file = event.target.files[0];
@@ -92,6 +92,9 @@ async function uploadChunks(file, chunks, md5, url, onProgress, uploadedChunks) 
         while (retryCount > 0) {
             try {
                 const response = await fetch(url, {
+                    headers:{
+                        'Authorization':token
+                    },
                     method: 'POST',
                     body: formData,
                 });
@@ -141,11 +144,11 @@ async function mergeChunks(file, totalChunks, md5, url) {
     const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization':token
         },
         body: JSON.stringify({
-            user_id: 1,
-            directory_id: 9,
+            directory_id: 5,
             filename: file.name,
             totalChunks: totalChunks,
             fileMD5: md5
@@ -164,6 +167,7 @@ async function getUploadedChunks(file, md5, totalChunks, url) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization':token
             },
             body: JSON.stringify({
                 filename: file.name,
