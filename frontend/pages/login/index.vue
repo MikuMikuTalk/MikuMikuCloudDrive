@@ -9,7 +9,7 @@
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username" type="text" placeholder="Username" v-model="username" />
+            id="username" type="text" placeholder="Username" v-model="loginData.username" />
         </div>
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
@@ -17,7 +17,7 @@
           </label>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-            id="password" type="password" placeholder="Password" v-model="password" />
+            id="password" type="password" placeholder="Password" v-model="loginData.password" />
         </div>
         <div class="flex items-center justify-between">
           <button
@@ -36,16 +36,29 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useAuthLogin } from '~/composables/api/auth/login';
+import type { LoginRequest } from '~/types/login';
+
 definePageMeta({
   layout: "auth"
 })
-const username = ref('');
-const password = ref('');
 
-const handleLogin = () => {
-  // Handle login logic here
-  console.log('Logging in with:', username.value, password.value);
+const loginData = ref<LoginRequest>({
+  username: "",
+  password: ""
+})
+const { login } = useAuthLogin()
+const { navigateToHome } = useNavigation()
+const handleLogin = async () => {
+  console.log('Logging in with:', loginData.value.username, loginData.value.password);
+  const result: boolean = await login(loginData.value)
+  console.log(result);
+
+  if (result) {
+
+    navigateToHome()
+  }
 };
 </script>
 
-<style></style>
+<style scoped></style>

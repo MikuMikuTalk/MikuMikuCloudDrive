@@ -10,4 +10,6 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  modules: ["@pinia/nuxt"],
+  plugins: ["~/plugins/axios"],
 });
