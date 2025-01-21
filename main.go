@@ -77,6 +77,14 @@ func main() {
 
 	app := config.ReadAppConfig()
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},                                                           // 允许所有来源
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},                                // 允许的 HTTP 方法
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"}, // 允许的请求头
+		ExposeHeaders:    []string{"Content-Length", "X-Custom-Header"},                           // 允许暴露的响应头
+		AllowCredentials: true,                                                                    // 允许凭证
+	}))
 	db := core.InitGorm()
 	rdb := core.InitRedis()
 
@@ -92,7 +100,6 @@ func main() {
 		RedisClient: rdb,
 	}
 	logrus.Debug("Gin 上下文创建成功！")
-	r.Use(cors.Default())
 	// 将服务上下文注入到 Gin 的上下文中
 	r.Use(func(c *gin.Context) {
 		c.Set("svc", svc)
