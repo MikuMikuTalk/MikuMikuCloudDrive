@@ -8,17 +8,20 @@ export const useAuthRegister = () => {
     const { $axios } = useNuxtApp(); //获取axios实例
     try {
       // 发送注册请求
-      const response = await $axios.post("/user/register", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const result: ApiResponse<RegisterResponse> = response.data;
-      if (result.code !== 200) {
-        notification.showError("注册失败，请重试");
+      const response: ApiResponse<RegisterResponse> = await $axios.post(
+        "/user/register",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.code !== 200) {
+        notification.showError("注册失败，请重试：" + response.message);
         return false;
       }
-      notification.showSuccess("注册成功，即将跳转");
+      notification.showSuccess("注册成功，即将跳转，请等待三秒");
       return true;
     } catch (err) {
       console.error("注册时遇到错误:", err);

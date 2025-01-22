@@ -7,6 +7,7 @@ export const useUserStore = defineStore("user", () => {
   const userInfo = ref<GetUserInfoResponse | null>(null);
   function updateUserInfo(data: GetUserInfoResponse) {
     userInfo.value = data;
+    console.info("用户信息更新成功：", data);
   }
   return {
     userInfo,

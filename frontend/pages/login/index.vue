@@ -40,7 +40,8 @@ import { useAuthLogin } from '~/composables/api/auth/login';
 import type { LoginRequest } from '~/types/login';
 
 definePageMeta({
-  layout: "auth"
+  layout: "auth",
+  middleware: ["auth"]
 })
 
 const loginData = ref<LoginRequest>({
