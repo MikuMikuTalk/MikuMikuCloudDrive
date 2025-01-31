@@ -1,6 +1,7 @@
 package services
 
 import (
+	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/utils/jwts"
 
 	"github.com/gin-gonic/gin"
@@ -10,10 +11,18 @@ import (
 
 // ServiceContext 服务上下文
 type ServiceContext struct {
-	DB          *gorm.DB
-	RedisClient *redis.Client
+	DB            *gorm.DB
+	RedisClient   *redis.Client
+	Configuration *config.Config
 }
 
+func NewServiceContext(db *gorm.DB, rdb *redis.Client, config *config.Config) *ServiceContext {
+	return &ServiceContext{
+		DB:            db,
+		RedisClient:   rdb,
+		Configuration: config,
+	}
+}
 func GetClaimsFromContext(c *gin.Context) *jwts.CustomClaims {
 	claims := c.MustGet("claims").(*jwts.CustomClaims)
 	return claims

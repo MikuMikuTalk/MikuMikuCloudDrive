@@ -8,6 +8,7 @@ import (
 
 	"MikuMikuCloudDrive/config"
 	"MikuMikuCloudDrive/core"
+	"MikuMikuCloudDrive/ioc"
 	"MikuMikuCloudDrive/middleware"
 	"MikuMikuCloudDrive/models"
 	"MikuMikuCloudDrive/routes"
@@ -37,6 +38,34 @@ func initDatabase() error {
 	}
 	logrus.Info("数据库表结构初始化成功")
 	return nil
+}
+
+func initCorsMiddleware(r *gin.Engine) {
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},                                                           // 允许所有来源
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},                                // 允许的 HTTP 方法
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"}, // 允许的请求头
+		ExposeHeaders:    []string{"Content-Length", "X-Custom-Header"},                           // 允许暴露的响应头
+		AllowCredentials: true,                                                                    // 允许凭证
+	}))
+}
+
+func outputRunningInfo(r *gin.Engine) {
+	app := config.ReadAppConfig()
+
+	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)
+	if err := r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port)); err != nil {
+		logrus.Error("服务器启动失败:", err)
+		os.Exit(1)
+	}
+}
+
+func injectSvcIntoContext(r *gin.Engine, svc *services.ServiceContext) {
+	// 将服务上下文注入到 Gin 的上下文中
+	r.Use(func(c *gin.Context) {
+		c.Set("svc", svc)
+		c.Next()
+	})
 }
 
 // @title MikuMikuCloudDrive
@@ -74,37 +103,27 @@ func main() {
 		}
 		return
 	}
-
-	app := config.ReadAppConfig()
-	r := gin.Default()
-
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},                                                           // 允许所有来源
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},                                // 允许的 HTTP 方法
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"}, // 允许的请求头
-		ExposeHeaders:    []string{"Content-Length", "X-Custom-Header"},                           // 允许暴露的响应头
-		AllowCredentials: true,                                                                    // 允许凭证
-	}))
-	db := core.InitGorm()
-	rdb := core.InitRedis()
-
 	// 自动迁移数据库
 	if err := initDatabase(); err != nil {
 		logrus.Error("数据库初始化失败:", err)
 		os.Exit(1)
 	}
 
+	r := gin.Default()
+
+	//初始化跨域中间件
+	initCorsMiddleware(r)
+
 	// 初始化服务上下文
-	svc := &services.ServiceContext{
-		DB:          db,
-		RedisClient: rdb,
+	svc, err := ioc.InitializeApp()
+	if err != nil {
+		logrus.Error("初始化上下文失败")
+		return
 	}
 	logrus.Debug("Gin 上下文创建成功！")
-	// 将服务上下文注入到 Gin 的上下文中
-	r.Use(func(c *gin.Context) {
-		c.Set("svc", svc)
-		c.Next()
-	})
+
+	//注入svc到gin的上下文
+	injectSvcIntoContext(r, svc)
 
 	// 注册路由
 	routes.UserRouter(r)
@@ -113,22 +132,22 @@ func main() {
 
 	// 注册静态文件
 	r.StaticFS("/web", http.Dir("./web"))
+
 	r.GET("/web", func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/web/index.html")
 	})
+
+	// 注册swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// 获取配置文件中的上传目录
-	uploadDir := app.UploadDir
+	uploadDir := svc.Configuration.App.UploadDir
 	r.Use(middleware.CheckDirectoryAccess)
 	r.StaticFS("/uploads", http.Dir("./"+uploadDir))
 
 	// 加载模板文件
 	r.LoadHTMLGlob("templates/*")
+	//	输出运行信息
+	outputRunningInfo(r)
 
-	logrus.Infof("%s[Ver %s] is running on %s:%d", color.GreenString(app.Title), color.BlackString(app.Version), app.Server, app.Port)
-	if err := r.Run(fmt.Sprintf("%s:%d", app.Server, app.Port)); err != nil {
-		logrus.Error("服务器启动失败:", err)
-		os.Exit(1)
-	}
 }

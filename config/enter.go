@@ -3,8 +3,10 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	App         App                `mapstructure:"app"`
-	MysqlConfig MySQLConfiguration `mapstructure:"mysql"`
+	App         *App                `mapstructure:"app"`
+	MysqlConfig *MySQLConfiguration `mapstructure:"mysql"`
+	RedisConfig *RedisConfiguration `mapstructure:"redis"`
+	AuthConfig  *Auth               `mapstructure:"auth"`
 }
 type App struct {
 	Title     string `mapstructure:"title"`
@@ -33,7 +35,7 @@ type Auth struct {
 	ExpireTime int    `mapstructure:"expire_time"`
 }
 
-func ReadAppConfig() App {
+func ReadAppConfig() *App {
 	var appConfiguration App
 	mainConfiguration := viper.New()
 	mainConfiguration.SetConfigName("config")
@@ -45,10 +47,10 @@ func ReadAppConfig() App {
 	if err := mainConfiguration.Sub("app").Unmarshal(&appConfiguration); err != nil {
 		panic(err)
 	}
-	return appConfiguration
+	return &appConfiguration
 }
 
-func ReadMySQLConfig() MySQLConfiguration {
+func ReadMySQLConfig() *MySQLConfiguration {
 	var mysqlConfiguration MySQLConfiguration
 	mainConfiguration := viper.New()
 	mainConfiguration.SetConfigName("config")
@@ -60,10 +62,10 @@ func ReadMySQLConfig() MySQLConfiguration {
 	if err := mainConfiguration.Sub("mysql").Unmarshal(&mysqlConfiguration); err != nil {
 		panic(err)
 	}
-	return mysqlConfiguration
+	return &mysqlConfiguration
 }
 
-func ReadRedisConfig() RedisConfiguration {
+func ReadRedisConfig() *RedisConfiguration {
 	var redisConfiguration RedisConfiguration
 	mainConfiguration := viper.New()
 	mainConfiguration.SetConfigName("config")
@@ -75,10 +77,10 @@ func ReadRedisConfig() RedisConfiguration {
 	if err := mainConfiguration.Sub("redis").Unmarshal(&redisConfiguration); err != nil {
 		panic(err)
 	}
-	return redisConfiguration
+	return &redisConfiguration
 }
 
-func ReadAuthConfig() Auth {
+func ReadAuthConfig() *Auth {
 	var authConfiguration Auth
 	mainConfiguration := viper.New()
 	mainConfiguration.SetConfigName("config")
@@ -90,5 +92,18 @@ func ReadAuthConfig() Auth {
 	if err := mainConfiguration.Sub("auth").Unmarshal(&authConfiguration); err != nil {
 		panic(err)
 	}
-	return authConfiguration
+	return &authConfiguration
+}
+
+func ReadAllConfig() *Config {
+	appConfig := ReadAppConfig()
+	mysqlConfig := ReadMySQLConfig()
+	redisConfig := ReadRedisConfig()
+	authConfig := ReadAuthConfig()
+	return &Config{
+		App:         appConfig,
+		MysqlConfig: mysqlConfig,
+		RedisConfig: redisConfig,
+		AuthConfig:  authConfig,
+	}
 }
